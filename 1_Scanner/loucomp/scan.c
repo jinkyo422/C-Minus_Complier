@@ -11,7 +11,7 @@
 
 /* states in scanner DFA */
 typedef enum
-   { START,INASSIGN,INCOMMENT,INNUM,INID,DONE }
+   { START,INEQ,INCOMMENT,INNUM,INID,DONE,INLT,INGT,INNE,INOVER,INCOMMENT_ }
    StateType;
 
 /* lexeme of identifier or reserved word */
@@ -56,9 +56,9 @@ static struct
     { char* str;
       TokenType tok;
     } reservedWords[MAXRESERVED]
-   = {{"if",IF},{"then",THEN},{"else",ELSE},{"end",END},
-      {"repeat",REPEAT},{"until",UNTIL},{"read",READ},
-      {"write",WRITE}};
+   = {{"if",IF},{"else",ELSE},{"while",WHILE},{"return",RETURN},{"int",INT},{"void",VOID},
+      /* discarded */ {"then",THEN},{"end",END},{"repeat",REPEAT},{"until",UNTIL},{"read",READ},{"write",WRITE}
+     };
 
 /* lookup an identifier to see if it is a reserved word */
 /* uses linear search */
@@ -94,13 +94,19 @@ TokenType getToken(void)
            state = INNUM;
          else if (isalpha(c))
            state = INID;
-         else if (c == ':')
-           state = INASSIGN;
          else if ((c == ' ') || (c == '\t') || (c == '\n'))
            save = FALSE;
-         else if (c == '{')
+         else if (c == '=')
+           state = INEQ;
+         else if (c == '<')
+           state = INLT;
+         else if (c == '>')
+           state = INGT;
+         else if (c == '!')
+           state = INNE;
+         else if (c == '/')
          { save = FALSE;
-           state = INCOMMENT;
+           state = INOVER;
          }
          else
          { state = DONE;
@@ -108,12 +114,6 @@ TokenType getToken(void)
            { case EOF:
                save = FALSE;
                currentToken = ENDFILE;
-               break;
-             case '=':
-               currentToken = EQ;
-               break;
-             case '<':
-               currentToken = LT;
                break;
              case '+':
                currentToken = PLUS;
@@ -124,17 +124,29 @@ TokenType getToken(void)
              case '*':
                currentToken = TIMES;
                break;
-             case '/':
-               currentToken = OVER;
-               break;
              case '(':
                currentToken = LPAREN;
                break;
              case ')':
                currentToken = RPAREN;
                break;
+             case '{':
+               currentToken = LCURLY;
+                break;
+             case '}':
+               currentToken = RCURLY;
+               break;
+             case '[':
+               currentToken = LBRACE;
+               break;
+             case ']':
+               currentToken = RBRACE;
+               break;
              case ';':
                currentToken = SEMI;
+               break;
+             case ',':
+               currentToken = COMMA;
                break;
              default:
                currentToken = ERROR;
@@ -142,23 +154,43 @@ TokenType getToken(void)
            }
          }
          break;
+       case INOVER:
+         if(c == '*')
+         { save = FALSE;
+           state = INCOMMENT;
+         }
+         else
+         { state = DONE;
+           currentToken = OVER;
+           ungetNextChar();
+         }
+         break;
        case INCOMMENT:
+         save = FALSE;
+         if (c == EOF)
+         { state = DONE;
+           currentToken = ENDFILE;//ERROR
+         }
+         else if (c == '*') 
+           state = INCOMMENT_;
+         break;
+       case INCOMMENT_:
          save = FALSE;
          if (c == EOF)
          { state = DONE;
            currentToken = ENDFILE;
          }
-         else if (c == '}') state = START;
+         else if (c == '/')
+           state = START;
          break;
-       case INASSIGN:
+       case INEQ:
          state = DONE;
          if (c == '=')
-           currentToken = ASSIGN;
+           currentToken = EQ;
          else
-         { /* backup in the input */
+         { 
            ungetNextChar();
-           save = FALSE;
-           currentToken = ERROR;
+           currentToken = ASSIGN;
          }
          break;
        case INNUM:
@@ -177,6 +209,37 @@ TokenType getToken(void)
            save = FALSE;
            state = DONE;
            currentToken = ID;
+         }
+         break;
+       case INLT:
+         state = DONE;
+         if (c == '=')
+           currentToken = LE;
+         else
+         { 
+           ungetNextChar();
+           currentToken = LT;
+         }
+         break;
+       case INGT:
+         state = DONE;
+         if (c == '=')
+           currentToken = GE;
+         else
+         {
+           ungetNextChar();
+           currentToken = GT;
+         }
+         break;
+       case INNE:
+         state = DONE;
+         if (c == '=')
+           currentToken = NE;
+         else
+         {
+           ungetNextChar();
+           save = FALSE;
+           currentToken = ERROR;
          }
          break;
        case DONE:

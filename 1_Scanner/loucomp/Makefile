@@ -4,14 +4,25 @@
 # K. Louden 2/3/98
 #
 
+all: cminus_cimpl cminus_flex
+
 CC = gcc
 
 CFLAGS = 
 
 OBJS = main.o util.o scan.o parse.o symtab.o analyze.o code.o cgen.o
 
-tiny: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o tiny
+OBJS_FLEX = main.o util.o parse.o symtab.o analyze.o code.o cgen.o lex.yy.o
+
+cminus_cimpl: $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o cminus_cimpl
+
+cminus_flex: $(OBJS_FLEX)
+	$(CC) $(CFLAGS) main.o util.o lex.yy.o -o cminus_flex -lfl
+
+lex.yy.o: cminus.l scan.h util.h globals.h
+	flex cminus.l
+	$(CC) $(CFLAGS) -c lex.yy.c -lfl
 
 main.o: main.c globals.h util.h scan.h parse.h analyze.h cgen.h
 	$(CC) $(CFLAGS) -c main.c
@@ -38,12 +49,14 @@ cgen.o: cgen.c globals.h symtab.h code.h cgen.h
 	$(CC) $(CFLAGS) -c cgen.c
 
 clean:
-	-rm tiny
-	-rm tm
+	-rm cminus_cimpl
+	-rm cminus_flex
+#	-rm tm
+	-rm lex.yy.o
 	-rm $(OBJS)
 
 tm: tm.c
 	$(CC) $(CFLAGS) tm.c -o tm
 
-all: tiny tm
+#all: tiny tm
 
