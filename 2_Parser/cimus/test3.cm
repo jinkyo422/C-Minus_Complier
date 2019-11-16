@@ -1,16 +1,8 @@
-/* A program to perform Euclid's
-Algorithm to /*computer gcd */
-test*/
-int gcd (int u, int v)
+/* Semantic Error Example */ 
+/* (1) uninitialized variables a and b (2) undefined variable c */ 
+void main ( void ) 
 {
-	if (v == 0) return u;
-	else return gcd(v,u-u/v*v);
-	/* u-u/v*v == u mod v */
-}
-/*
-void main(void)
-{
-	int x; int y;
-	x = input(); y = input();
-	output(gcd(x,y));
+    int a;
+    int b;
+    c = a + b;
 }
