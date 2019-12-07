@@ -1,0 +1,1407 @@
+Terminals unused in grammar
+
+   THEN
+   END
+   REPEAT
+   UNTIL
+   READ
+   WRITE
+   ERROR
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: decl_list
+
+    2 decl_list: decl_list decl
+    3          | decl
+
+    4 decl: var_decl
+    5     | fun_decl
+
+    6 var_decl: type_spec id SEMI
+    7         | type_spec id LBRACE num RBRACE SEMI
+
+    8 type_spec: INT
+    9          | VOID
+
+   10 @1: %empty
+
+   11 fun_decl: type_spec id @1 LPAREN params RPAREN comp_stmt
+
+   12 params: param_list
+   13       | VOID
+
+   14 param_list: param_list COMMA param
+   15           | param
+
+   16 param: type_spec id
+   17      | type_spec id LBRACE RBRACE
+
+   18 comp_stmt: LCURLY local_decl stmt_list RCURLY
+
+   19 local_decl: local_decl var_decl
+   20           | %empty
+
+   21 stmt_list: stmt_list stmt
+   22          | %empty
+
+   23 stmt: exp_stmt
+   24     | comp_stmt
+   25     | sel_stmt
+   26     | iter_stmt
+   27     | ret_stmt
+
+   28 exp_stmt: exp SEMI
+   29         | SEMI
+
+   30 sel_stmt: IF LPAREN exp RPAREN stmt
+   31         | IF LPAREN exp RPAREN stmt ELSE stmt
+
+   32 iter_stmt: WHILE LPAREN exp RPAREN stmt
+
+   33 ret_stmt: RETURN SEMI
+   34         | RETURN exp SEMI
+
+   35 @2: %empty
+
+   36 exp: var @2 ASSIGN exp
+   37    | simple_exp LT simple_exp
+   38    | simple_exp EQ simple_exp
+   39    | simple_exp NE simple_exp
+   40    | simple_exp LE simple_exp
+   41    | simple_exp GT simple_exp
+   42    | simple_exp GE simple_exp
+   43    | simple_exp
+
+   44 var: id
+
+   45 @3: %empty
+
+   46 var: id @3 LBRACE simple_exp RBRACE
+
+   47 simple_exp: simple_exp PLUS term
+   48           | simple_exp MINUS term
+   49           | term
+
+   50 term: term TIMES factor
+   51     | term OVER factor
+   52     | factor
+
+   53 factor: LPAREN exp RPAREN
+   54       | var
+   55       | call
+   56       | NUM
+
+   57 @4: %empty
+
+   58 call: id @4 LPAREN args RPAREN
+
+   59 args: arg_list
+   60     | %empty
+
+   61 arg_list: arg_list COMMA exp
+   62         | exp
+
+   63 id: ID
+
+   64 num: NUM
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+IF (258) 30 31
+ELSE (259) 31
+WHILE (260) 32
+RETURN (261) 33 34
+INT (262) 8
+VOID (263) 9 13
+THEN (264)
+END (265)
+REPEAT (266)
+UNTIL (267)
+READ (268)
+WRITE (269)
+ID (270) 63
+NUM (271) 56 64
+ASSIGN (272) 36
+EQ (273) 38
+NE (274) 39
+LT (275) 37
+LE (276) 40
+GE (277) 42
+GT (278) 41
+PLUS (279) 47
+MINUS (280) 48
+TIMES (281) 50
+OVER (282) 51
+LPAREN (283) 11 30 31 32 53 58
+RPAREN (284) 11 30 31 32 53 58
+LBRACE (285) 7 17 46
+RBRACE (286) 7 17 46
+LCURLY (287) 18
+RCURLY (288) 18
+SEMI (289) 6 7 28 29 33 34
+COMMA (290) 14 61
+ERROR (291)
+LOWER_THAN_ELSE (292)
+
+
+Nonterminals, with rules where they appear
+
+$accept (38)
+    on left: 0
+program (39)
+    on left: 1, on right: 0
+decl_list (40)
+    on left: 2 3, on right: 1 2
+decl (41)
+    on left: 4 5, on right: 2 3
+var_decl (42)
+    on left: 6 7, on right: 4 19
+type_spec (43)
+    on left: 8 9, on right: 6 7 11 16 17
+fun_decl (44)
+    on left: 11, on right: 5
+@1 (45)
+    on left: 10, on right: 11
+params (46)
+    on left: 12 13, on right: 11
+param_list (47)
+    on left: 14 15, on right: 12 14
+param (48)
+    on left: 16 17, on right: 14 15
+comp_stmt (49)
+    on left: 18, on right: 11 24
+local_decl (50)
+    on left: 19 20, on right: 18 19
+stmt_list (51)
+    on left: 21 22, on right: 18 21
+stmt (52)
+    on left: 23 24 25 26 27, on right: 21 30 31 32
+exp_stmt (53)
+    on left: 28 29, on right: 23
+sel_stmt (54)
+    on left: 30 31, on right: 25
+iter_stmt (55)
+    on left: 32, on right: 26
+ret_stmt (56)
+    on left: 33 34, on right: 27
+exp (57)
+    on left: 36 37 38 39 40 41 42 43, on right: 28 30 31 32 34 36 53
+    61 62
+@2 (58)
+    on left: 35, on right: 36
+var (59)
+    on left: 44 46, on right: 36 54
+@3 (60)
+    on left: 45, on right: 46
+simple_exp (61)
+    on left: 47 48 49, on right: 37 38 39 40 41 42 43 46 47 48
+term (62)
+    on left: 50 51 52, on right: 47 48 49 50 51
+factor (63)
+    on left: 53 54 55 56, on right: 50 51 52
+call (64)
+    on left: 58, on right: 55
+@4 (65)
+    on left: 57, on right: 58
+args (66)
+    on left: 59 60, on right: 58
+arg_list (67)
+    on left: 61 62, on right: 59 61
+id (68)
+    on left: 63, on right: 6 7 11 16 17 44 46 58
+num (69)
+    on left: 64, on right: 7
+
+
+State 0
+
+    0 $accept: . program $end
+
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 2
+
+    program    go to state 3
+    decl_list  go to state 4
+    decl       go to state 5
+    var_decl   go to state 6
+    type_spec  go to state 7
+    fun_decl   go to state 8
+
+
+State 1
+
+    8 type_spec: INT .
+
+    $default  reduce using rule 8 (type_spec)
+
+
+State 2
+
+    9 type_spec: VOID .
+
+    $default  reduce using rule 9 (type_spec)
+
+
+State 3
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 9
+
+
+State 4
+
+    1 program: decl_list .
+    2 decl_list: decl_list . decl
+
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 2
+
+    $default  reduce using rule 1 (program)
+
+    decl       go to state 10
+    var_decl   go to state 6
+    type_spec  go to state 7
+    fun_decl   go to state 8
+
+
+State 5
+
+    3 decl_list: decl .
+
+    $default  reduce using rule 3 (decl_list)
+
+
+State 6
+
+    4 decl: var_decl .
+
+    $default  reduce using rule 4 (decl)
+
+
+State 7
+
+    6 var_decl: type_spec . id SEMI
+    7         | type_spec . id LBRACE num RBRACE SEMI
+   11 fun_decl: type_spec . id @1 LPAREN params RPAREN comp_stmt
+
+    ID  shift, and go to state 11
+
+    id  go to state 12
+
+
+State 8
+
+    5 decl: fun_decl .
+
+    $default  reduce using rule 5 (decl)
+
+
+State 9
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 10
+
+    2 decl_list: decl_list decl .
+
+    $default  reduce using rule 2 (decl_list)
+
+
+State 11
+
+   63 id: ID .
+
+    $default  reduce using rule 63 (id)
+
+
+State 12
+
+    6 var_decl: type_spec id . SEMI
+    7         | type_spec id . LBRACE num RBRACE SEMI
+   11 fun_decl: type_spec id . @1 LPAREN params RPAREN comp_stmt
+
+    LBRACE  shift, and go to state 13
+    SEMI    shift, and go to state 14
+
+    $default  reduce using rule 10 (@1)
+
+    @1  go to state 15
+
+
+State 13
+
+    7 var_decl: type_spec id LBRACE . num RBRACE SEMI
+
+    NUM  shift, and go to state 16
+
+    num  go to state 17
+
+
+State 14
+
+    6 var_decl: type_spec id SEMI .
+
+    $default  reduce using rule 6 (var_decl)
+
+
+State 15
+
+   11 fun_decl: type_spec id @1 . LPAREN params RPAREN comp_stmt
+
+    LPAREN  shift, and go to state 18
+
+
+State 16
+
+   64 num: NUM .
+
+    $default  reduce using rule 64 (num)
+
+
+State 17
+
+    7 var_decl: type_spec id LBRACE num . RBRACE SEMI
+
+    RBRACE  shift, and go to state 19
+
+
+State 18
+
+   11 fun_decl: type_spec id @1 LPAREN . params RPAREN comp_stmt
+
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 20
+
+    type_spec   go to state 21
+    params      go to state 22
+    param_list  go to state 23
+    param       go to state 24
+
+
+State 19
+
+    7 var_decl: type_spec id LBRACE num RBRACE . SEMI
+
+    SEMI  shift, and go to state 25
+
+
+State 20
+
+    9 type_spec: VOID .
+   13 params: VOID .
+
+    RPAREN    reduce using rule 13 (params)
+    $default  reduce using rule 9 (type_spec)
+
+
+State 21
+
+   16 param: type_spec . id
+   17      | type_spec . id LBRACE RBRACE
+
+    ID  shift, and go to state 11
+
+    id  go to state 26
+
+
+State 22
+
+   11 fun_decl: type_spec id @1 LPAREN params . RPAREN comp_stmt
+
+    RPAREN  shift, and go to state 27
+
+
+State 23
+
+   12 params: param_list .
+   14 param_list: param_list . COMMA param
+
+    COMMA  shift, and go to state 28
+
+    $default  reduce using rule 12 (params)
+
+
+State 24
+
+   15 param_list: param .
+
+    $default  reduce using rule 15 (param_list)
+
+
+State 25
+
+    7 var_decl: type_spec id LBRACE num RBRACE SEMI .
+
+    $default  reduce using rule 7 (var_decl)
+
+
+State 26
+
+   16 param: type_spec id .
+   17      | type_spec id . LBRACE RBRACE
+
+    LBRACE  shift, and go to state 29
+
+    $default  reduce using rule 16 (param)
+
+
+State 27
+
+   11 fun_decl: type_spec id @1 LPAREN params RPAREN . comp_stmt
+
+    LCURLY  shift, and go to state 30
+
+    comp_stmt  go to state 31
+
+
+State 28
+
+   14 param_list: param_list COMMA . param
+
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 2
+
+    type_spec  go to state 21
+    param      go to state 32
+
+
+State 29
+
+   17 param: type_spec id LBRACE . RBRACE
+
+    RBRACE  shift, and go to state 33
+
+
+State 30
+
+   18 comp_stmt: LCURLY . local_decl stmt_list RCURLY
+
+    $default  reduce using rule 20 (local_decl)
+
+    local_decl  go to state 34
+
+
+State 31
+
+   11 fun_decl: type_spec id @1 LPAREN params RPAREN comp_stmt .
+
+    $default  reduce using rule 11 (fun_decl)
+
+
+State 32
+
+   14 param_list: param_list COMMA param .
+
+    $default  reduce using rule 14 (param_list)
+
+
+State 33
+
+   17 param: type_spec id LBRACE RBRACE .
+
+    $default  reduce using rule 17 (param)
+
+
+State 34
+
+   18 comp_stmt: LCURLY local_decl . stmt_list RCURLY
+   19 local_decl: local_decl . var_decl
+
+    INT   shift, and go to state 1
+    VOID  shift, and go to state 2
+
+    $default  reduce using rule 22 (stmt_list)
+
+    var_decl   go to state 35
+    type_spec  go to state 36
+    stmt_list  go to state 37
+
+
+State 35
+
+   19 local_decl: local_decl var_decl .
+
+    $default  reduce using rule 19 (local_decl)
+
+
+State 36
+
+    6 var_decl: type_spec . id SEMI
+    7         | type_spec . id LBRACE num RBRACE SEMI
+
+    ID  shift, and go to state 11
+
+    id  go to state 38
+
+
+State 37
+
+   18 comp_stmt: LCURLY local_decl stmt_list . RCURLY
+   21 stmt_list: stmt_list . stmt
+
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+    LCURLY  shift, and go to state 30
+    RCURLY  shift, and go to state 44
+    SEMI    shift, and go to state 45
+
+    comp_stmt   go to state 46
+    stmt        go to state 47
+    exp_stmt    go to state 48
+    sel_stmt    go to state 49
+    iter_stmt   go to state 50
+    ret_stmt    go to state 51
+    exp         go to state 52
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 38
+
+    6 var_decl: type_spec id . SEMI
+    7         | type_spec id . LBRACE num RBRACE SEMI
+
+    LBRACE  shift, and go to state 13
+    SEMI    shift, and go to state 14
+
+
+State 39
+
+   30 sel_stmt: IF . LPAREN exp RPAREN stmt
+   31         | IF . LPAREN exp RPAREN stmt ELSE stmt
+
+    LPAREN  shift, and go to state 59
+
+
+State 40
+
+   32 iter_stmt: WHILE . LPAREN exp RPAREN stmt
+
+    LPAREN  shift, and go to state 60
+
+
+State 41
+
+   33 ret_stmt: RETURN . SEMI
+   34         | RETURN . exp SEMI
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+    SEMI    shift, and go to state 61
+
+    exp         go to state 62
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 42
+
+   56 factor: NUM .
+
+    $default  reduce using rule 56 (factor)
+
+
+State 43
+
+   53 factor: LPAREN . exp RPAREN
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    exp         go to state 63
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 44
+
+   18 comp_stmt: LCURLY local_decl stmt_list RCURLY .
+
+    $default  reduce using rule 18 (comp_stmt)
+
+
+State 45
+
+   29 exp_stmt: SEMI .
+
+    $default  reduce using rule 29 (exp_stmt)
+
+
+State 46
+
+   24 stmt: comp_stmt .
+
+    $default  reduce using rule 24 (stmt)
+
+
+State 47
+
+   21 stmt_list: stmt_list stmt .
+
+    $default  reduce using rule 21 (stmt_list)
+
+
+State 48
+
+   23 stmt: exp_stmt .
+
+    $default  reduce using rule 23 (stmt)
+
+
+State 49
+
+   25 stmt: sel_stmt .
+
+    $default  reduce using rule 25 (stmt)
+
+
+State 50
+
+   26 stmt: iter_stmt .
+
+    $default  reduce using rule 26 (stmt)
+
+
+State 51
+
+   27 stmt: ret_stmt .
+
+    $default  reduce using rule 27 (stmt)
+
+
+State 52
+
+   28 exp_stmt: exp . SEMI
+
+    SEMI  shift, and go to state 64
+
+
+State 53
+
+   36 exp: var . @2 ASSIGN exp
+   54 factor: var .
+
+    ASSIGN    reduce using rule 35 (@2)
+    $default  reduce using rule 54 (factor)
+
+    @2  go to state 65
+
+
+State 54
+
+   37 exp: simple_exp . LT simple_exp
+   38    | simple_exp . EQ simple_exp
+   39    | simple_exp . NE simple_exp
+   40    | simple_exp . LE simple_exp
+   41    | simple_exp . GT simple_exp
+   42    | simple_exp . GE simple_exp
+   43    | simple_exp .
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    EQ     shift, and go to state 66
+    NE     shift, and go to state 67
+    LT     shift, and go to state 68
+    LE     shift, and go to state 69
+    GE     shift, and go to state 70
+    GT     shift, and go to state 71
+    PLUS   shift, and go to state 72
+    MINUS  shift, and go to state 73
+
+    $default  reduce using rule 43 (exp)
+
+
+State 55
+
+   49 simple_exp: term .
+   50 term: term . TIMES factor
+   51     | term . OVER factor
+
+    TIMES  shift, and go to state 74
+    OVER   shift, and go to state 75
+
+    $default  reduce using rule 49 (simple_exp)
+
+
+State 56
+
+   52 term: factor .
+
+    $default  reduce using rule 52 (term)
+
+
+State 57
+
+   55 factor: call .
+
+    $default  reduce using rule 55 (factor)
+
+
+State 58
+
+   44 var: id .
+   46    | id . @3 LBRACE simple_exp RBRACE
+   58 call: id . @4 LPAREN args RPAREN
+
+    LPAREN    reduce using rule 57 (@4)
+    LBRACE    reduce using rule 45 (@3)
+    $default  reduce using rule 44 (var)
+
+    @3  go to state 76
+    @4  go to state 77
+
+
+State 59
+
+   30 sel_stmt: IF LPAREN . exp RPAREN stmt
+   31         | IF LPAREN . exp RPAREN stmt ELSE stmt
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    exp         go to state 78
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 60
+
+   32 iter_stmt: WHILE LPAREN . exp RPAREN stmt
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    exp         go to state 79
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 61
+
+   33 ret_stmt: RETURN SEMI .
+
+    $default  reduce using rule 33 (ret_stmt)
+
+
+State 62
+
+   34 ret_stmt: RETURN exp . SEMI
+
+    SEMI  shift, and go to state 80
+
+
+State 63
+
+   53 factor: LPAREN exp . RPAREN
+
+    RPAREN  shift, and go to state 81
+
+
+State 64
+
+   28 exp_stmt: exp SEMI .
+
+    $default  reduce using rule 28 (exp_stmt)
+
+
+State 65
+
+   36 exp: var @2 . ASSIGN exp
+
+    ASSIGN  shift, and go to state 82
+
+
+State 66
+
+   38 exp: simple_exp EQ . simple_exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var         go to state 83
+    simple_exp  go to state 84
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 67
+
+   39 exp: simple_exp NE . simple_exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var         go to state 83
+    simple_exp  go to state 85
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 68
+
+   37 exp: simple_exp LT . simple_exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var         go to state 83
+    simple_exp  go to state 86
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 69
+
+   40 exp: simple_exp LE . simple_exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var         go to state 83
+    simple_exp  go to state 87
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 70
+
+   42 exp: simple_exp GE . simple_exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var         go to state 83
+    simple_exp  go to state 88
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 71
+
+   41 exp: simple_exp GT . simple_exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var         go to state 83
+    simple_exp  go to state 89
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 72
+
+   47 simple_exp: simple_exp PLUS . term
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var     go to state 83
+    term    go to state 90
+    factor  go to state 56
+    call    go to state 57
+    id      go to state 58
+
+
+State 73
+
+   48 simple_exp: simple_exp MINUS . term
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var     go to state 83
+    term    go to state 91
+    factor  go to state 56
+    call    go to state 57
+    id      go to state 58
+
+
+State 74
+
+   50 term: term TIMES . factor
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var     go to state 83
+    factor  go to state 92
+    call    go to state 57
+    id      go to state 58
+
+
+State 75
+
+   51 term: term OVER . factor
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var     go to state 83
+    factor  go to state 93
+    call    go to state 57
+    id      go to state 58
+
+
+State 76
+
+   46 var: id @3 . LBRACE simple_exp RBRACE
+
+    LBRACE  shift, and go to state 94
+
+
+State 77
+
+   58 call: id @4 . LPAREN args RPAREN
+
+    LPAREN  shift, and go to state 95
+
+
+State 78
+
+   30 sel_stmt: IF LPAREN exp . RPAREN stmt
+   31         | IF LPAREN exp . RPAREN stmt ELSE stmt
+
+    RPAREN  shift, and go to state 96
+
+
+State 79
+
+   32 iter_stmt: WHILE LPAREN exp . RPAREN stmt
+
+    RPAREN  shift, and go to state 97
+
+
+State 80
+
+   34 ret_stmt: RETURN exp SEMI .
+
+    $default  reduce using rule 34 (ret_stmt)
+
+
+State 81
+
+   53 factor: LPAREN exp RPAREN .
+
+    $default  reduce using rule 53 (factor)
+
+
+State 82
+
+   36 exp: var @2 ASSIGN . exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    exp         go to state 98
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 83
+
+   54 factor: var .
+
+    $default  reduce using rule 54 (factor)
+
+
+State 84
+
+   38 exp: simple_exp EQ simple_exp .
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    PLUS   shift, and go to state 72
+    MINUS  shift, and go to state 73
+
+    $default  reduce using rule 38 (exp)
+
+
+State 85
+
+   39 exp: simple_exp NE simple_exp .
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    PLUS   shift, and go to state 72
+    MINUS  shift, and go to state 73
+
+    $default  reduce using rule 39 (exp)
+
+
+State 86
+
+   37 exp: simple_exp LT simple_exp .
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    PLUS   shift, and go to state 72
+    MINUS  shift, and go to state 73
+
+    $default  reduce using rule 37 (exp)
+
+
+State 87
+
+   40 exp: simple_exp LE simple_exp .
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    PLUS   shift, and go to state 72
+    MINUS  shift, and go to state 73
+
+    $default  reduce using rule 40 (exp)
+
+
+State 88
+
+   42 exp: simple_exp GE simple_exp .
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    PLUS   shift, and go to state 72
+    MINUS  shift, and go to state 73
+
+    $default  reduce using rule 42 (exp)
+
+
+State 89
+
+   41 exp: simple_exp GT simple_exp .
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    PLUS   shift, and go to state 72
+    MINUS  shift, and go to state 73
+
+    $default  reduce using rule 41 (exp)
+
+
+State 90
+
+   47 simple_exp: simple_exp PLUS term .
+   50 term: term . TIMES factor
+   51     | term . OVER factor
+
+    TIMES  shift, and go to state 74
+    OVER   shift, and go to state 75
+
+    $default  reduce using rule 47 (simple_exp)
+
+
+State 91
+
+   48 simple_exp: simple_exp MINUS term .
+   50 term: term . TIMES factor
+   51     | term . OVER factor
+
+    TIMES  shift, and go to state 74
+    OVER   shift, and go to state 75
+
+    $default  reduce using rule 48 (simple_exp)
+
+
+State 92
+
+   50 term: term TIMES factor .
+
+    $default  reduce using rule 50 (term)
+
+
+State 93
+
+   51 term: term OVER factor .
+
+    $default  reduce using rule 51 (term)
+
+
+State 94
+
+   46 var: id @3 LBRACE . simple_exp RBRACE
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    var         go to state 83
+    simple_exp  go to state 99
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 95
+
+   58 call: id @4 LPAREN . args RPAREN
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    $default  reduce using rule 60 (args)
+
+    exp         go to state 100
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    args        go to state 101
+    arg_list    go to state 102
+    id          go to state 58
+
+
+State 96
+
+   30 sel_stmt: IF LPAREN exp RPAREN . stmt
+   31         | IF LPAREN exp RPAREN . stmt ELSE stmt
+
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+    LCURLY  shift, and go to state 30
+    SEMI    shift, and go to state 45
+
+    comp_stmt   go to state 46
+    stmt        go to state 103
+    exp_stmt    go to state 48
+    sel_stmt    go to state 49
+    iter_stmt   go to state 50
+    ret_stmt    go to state 51
+    exp         go to state 52
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 97
+
+   32 iter_stmt: WHILE LPAREN exp RPAREN . stmt
+
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+    LCURLY  shift, and go to state 30
+    SEMI    shift, and go to state 45
+
+    comp_stmt   go to state 46
+    stmt        go to state 104
+    exp_stmt    go to state 48
+    sel_stmt    go to state 49
+    iter_stmt   go to state 50
+    ret_stmt    go to state 51
+    exp         go to state 52
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 98
+
+   36 exp: var @2 ASSIGN exp .
+
+    $default  reduce using rule 36 (exp)
+
+
+State 99
+
+   46 var: id @3 LBRACE simple_exp . RBRACE
+   47 simple_exp: simple_exp . PLUS term
+   48           | simple_exp . MINUS term
+
+    PLUS    shift, and go to state 72
+    MINUS   shift, and go to state 73
+    RBRACE  shift, and go to state 105
+
+
+State 100
+
+   62 arg_list: exp .
+
+    $default  reduce using rule 62 (arg_list)
+
+
+State 101
+
+   58 call: id @4 LPAREN args . RPAREN
+
+    RPAREN  shift, and go to state 106
+
+
+State 102
+
+   59 args: arg_list .
+   61 arg_list: arg_list . COMMA exp
+
+    COMMA  shift, and go to state 107
+
+    $default  reduce using rule 59 (args)
+
+
+State 103
+
+   30 sel_stmt: IF LPAREN exp RPAREN stmt .
+   31         | IF LPAREN exp RPAREN stmt . ELSE stmt
+
+    ELSE  shift, and go to state 108
+
+    $default  reduce using rule 30 (sel_stmt)
+
+
+State 104
+
+   32 iter_stmt: WHILE LPAREN exp RPAREN stmt .
+
+    $default  reduce using rule 32 (iter_stmt)
+
+
+State 105
+
+   46 var: id @3 LBRACE simple_exp RBRACE .
+
+    $default  reduce using rule 46 (var)
+
+
+State 106
+
+   58 call: id @4 LPAREN args RPAREN .
+
+    $default  reduce using rule 58 (call)
+
+
+State 107
+
+   61 arg_list: arg_list COMMA . exp
+
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+
+    exp         go to state 109
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 108
+
+   31 sel_stmt: IF LPAREN exp RPAREN stmt ELSE . stmt
+
+    IF      shift, and go to state 39
+    WHILE   shift, and go to state 40
+    RETURN  shift, and go to state 41
+    ID      shift, and go to state 11
+    NUM     shift, and go to state 42
+    LPAREN  shift, and go to state 43
+    LCURLY  shift, and go to state 30
+    SEMI    shift, and go to state 45
+
+    comp_stmt   go to state 46
+    stmt        go to state 110
+    exp_stmt    go to state 48
+    sel_stmt    go to state 49
+    iter_stmt   go to state 50
+    ret_stmt    go to state 51
+    exp         go to state 52
+    var         go to state 53
+    simple_exp  go to state 54
+    term        go to state 55
+    factor      go to state 56
+    call        go to state 57
+    id          go to state 58
+
+
+State 109
+
+   61 arg_list: arg_list COMMA exp .
+
+    $default  reduce using rule 61 (arg_list)
+
+
+State 110
+
+   31 sel_stmt: IF LPAREN exp RPAREN stmt ELSE stmt .
+
+    $default  reduce using rule 31 (sel_stmt)
