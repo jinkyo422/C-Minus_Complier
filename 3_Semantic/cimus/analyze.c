@@ -202,9 +202,6 @@ static void afterInsertNode(TreeNode *t)
     t->type = t->child[0]->type;
 }
 
-/* Function initBuildSymtab constructs 2 necessary functions
- * input() && output(). And also creates globalScope before anything else.
- */
 static void initBuildSymtab()
 {
   /* global scope */

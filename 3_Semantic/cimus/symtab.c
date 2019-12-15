@@ -177,6 +177,62 @@ char *printType(ExpType type)
   }
 }
 
+static void printGlobalSymbol(FILE *listing)
+{
+  Scope globalScope;
+  for (int i = 0; i < nScope; i++) {
+    if (scopes[i]->name == NULL) {
+      globalScope = scopes[i];
+      break;
+    }
+  }
+  for (int i = 0; i < SIZE; i++) {
+    Bucket curBucket = globalScope->bucket[i];
+    while (curBucket) {
+      TreeNode *t = curBucket->t;
+      LineList l = curBucket->lines;
+      if (t->nodekind == StmtK) {
+        fprintf(listing, "%-14s", t->attr.name);
+        if (t->kind.stmt == FunK)
+          fprintf(listing, "%-15s", "Function");
+        else
+          fprintf(listing, "%-15s", printType(t->type));
+        fprintf(listing, "%-12s", "global");
+        fprintf(listing, "%-9d", curBucket->memloc);
+        while (l != NULL)
+        { fprintf(listing,"%4d ",l->lineno);
+          l = l->next;
+        }
+        fprintf(listing, "\n");
+      }
+      curBucket = curBucket->next;
+    }
+  }
+}
+
+static void printLocalSymbol(FILE *listing, Scope curScope)
+{
+  for (int i = 0; i < SIZE; i++) {
+    Bucket curBucket = curScope->bucket[i];
+    while (curBucket) {
+      TreeNode *t = curBucket->t;
+	LineList l = curBucket->lines;
+      if ((t->nodekind == StmtK && t->kind.stmt != FunK) || t->nodekind == ParamK) {
+        fprintf(listing, "%-14s", t->attr.name);
+        fprintf(listing, "%-15s", printType(t->type));
+        fprintf(listing, "%-12s", curScope->name);
+	fprintf(listing, "%-9d", curBucket->memloc);
+	while (l != NULL)
+        { fprintf(listing,"%4d ",l->lineno);
+          l = l->next;
+        }
+	fprintf(listing, "\n");
+      }
+      curBucket = curBucket->next;
+    }
+  }
+}
+
 static void printFunctionDeclaration(FILE *listing)
 {
   for (int i = 0; i < nScope; i++) {
@@ -254,10 +310,17 @@ static void printScopeInfo(FILE *listing, Scope curScope)
  */
 void printSymTab(FILE *listing)
 {
-fprintf(listing, "\n\n< Symbol Table >\n");
-  fprintf(listing, "Function Name  Scope Name  Return Type   Paramter Name  Paramter Type\n");
-  fprintf(listing, "-------------  ----------  -----------   -------------  -------------\n\n");
-  //printSymbol(listing);
+  int i;
+  fprintf(listing, "\n\n< Symbol Table >\n");
+  fprintf(listing, "Variable Name Variable Type  Scope Name  Location   Line Numbers\n");
+  fprintf(listing, "------------- -------------  ----------  --------   ------------\n");
+  printGlobalSymbol(listing);
+  for (i = 0; i < nScope; i++) {
+    if (scopes[i]->name == NULL)
+      continue;
+    printLocalSymbol(listing, scopes[i]);
+  }
+  fprintf(listing, "\n");
 
   fprintf(listing, "< Function Table >\n");
   fprintf(listing, "Function Name  Scope Name  Return Type   Paramter Name  Paramter Type\n");
@@ -273,7 +336,7 @@ fprintf(listing, "\n\n< Symbol Table >\n");
   fprintf(listing, "< Function Parameters and Local Variables >\n");
   fprintf(listing, "  Scope Name     Nested Level     ID Name     Data Type\n");
   fprintf(listing, "--------------   ------------   -----------   ---------\n");
-  for (int i = 0; i < nScope; i++) {
+  for (i = 0; i < nScope; i++) {
     if (scopes[i]->name == NULL)
       continue;
     printScopeInfo(listing, scopes[i]);
